@@ -7,12 +7,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
-public class LoggerMail implements Logger {
+public class MailLogger implements Logger {
     private final String username = "javacrawlertest3@onet.eu";
     private final String password = "javapassword3";
     private final String recipient = "javacrawlertest3@onet.eu";
 
-    /*public LoggerMail(String userName, String password, String recipient) {
+    /*public MailLogger(String userName, String password, String recipient) {
         this.userName = username;
         this.password = password;
         this.recipient = recipient;
@@ -50,7 +50,7 @@ public class LoggerMail implements Logger {
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.out.println("LoggerMail Error");
+            System.out.println("MailLogger Error");
         }
     }
 }

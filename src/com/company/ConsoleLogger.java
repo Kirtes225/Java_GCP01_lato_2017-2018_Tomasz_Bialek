@@ -2,9 +2,9 @@ package com.company;
 
 import com.example.Student;
 
-public class LoggerConsole implements Logger {
+public class ConsoleLogger implements Logger {
 
-    public LoggerConsole() {
+    public ConsoleLogger() {
     }
 
     @Override
