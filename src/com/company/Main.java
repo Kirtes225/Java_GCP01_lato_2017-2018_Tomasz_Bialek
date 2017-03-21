@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        final Logger[] loggers = {new LoggerConsole(), new MailLogger(args[1], args[2], args[3])};
+        final Logger[] loggers = {new LoggerConsole(), new LoggerMail(args[1], args[2], args[3])};
 
         new Thread(() -> {
             try {
