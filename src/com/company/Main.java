@@ -8,11 +8,10 @@ public class Main {
 
         final Logger[] loggers = {new LoggerConsole(), new LoggerMail(args[1], args[2], args[3])};
 
-        new Thread(() -> {
+        {
             try {
                 final Crawler crawler = new Crawler(new URL("http://home.agh.edu.pl/~ggorecki/IS_Java/students.txt"), args[0]);
                 crawler.addIterationStartedListener((crawlerEvent -> System.out.println("Iteration: " + crawlerEvent.getIteration())));
-                //crawler.addIterationFinishedListeners((crawlerEvent -> System.out.println(crawlerEvent.getType())));
                 crawler.addStudentAddedListener((crawlerEvent -> {
                     for (Logger logger : loggers) {
                         logger.log("Added: " + crawlerEvent.getStudent().getFirstName() + " " +
@@ -28,7 +27,7 @@ public class Main {
                 e.printStackTrace();
                 System.out.println("Error");
             }
-        }).start();
+        }
 
     }
 }
