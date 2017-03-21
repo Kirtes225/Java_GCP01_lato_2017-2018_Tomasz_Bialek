@@ -8,20 +8,22 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class LoggerMail implements Logger {
-    private final String userName;
-    private final String password;
-    private final String recipient;
+    private final String username = "javacrawlertest3@gmail.com";
+    private final String password = "javapassword3";
+    private final String recipient = "javacrawlertest3@gmail.com";
 
-    public LoggerMail(String userName, String password, String recipient) {
-        this.userName = userName;
+    /*public LoggerMail(String userName, String password, String recipient) {
+        this.userName = username;
         this.password = password;
         this.recipient = recipient;
-    }
+    }*/
 
     @Override
     public void log(String status, Student student) {
+        String subject = "Crawler - change: " + status;
+        String msg = status + ":" + student.toString();
         Properties properties = new Properties();
-        properties.put("mail.smtp.host", "poczta.agh.edu.pl");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.socketFactory.port", "465");
         properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         properties.put("mail.smtp.auth", "true");
@@ -30,15 +32,15 @@ public class LoggerMail implements Logger {
         Session session = Session.getDefaultInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(userName, password);
+                return new PasswordAuthentication(username, password);
             }
         });
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(userName));
+            message.setFrom(new InternetAddress(username));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-            message.setSubject(status);
+            message.setSubject(subject);
 
             message.setText("");
             if (student != null) {
