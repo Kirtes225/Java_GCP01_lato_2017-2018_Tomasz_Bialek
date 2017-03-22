@@ -8,7 +8,7 @@ public class Main {
 
         final Logger[] loggers = {new ConsoleLogger(), new MailLogger()};
 
-        final Crawler crawler = new Crawler(new URL("http://home.agh.edu.pl/~ggorecki/IS_Java/students"));
+        final Crawler crawler = new Crawler(new URL("http://home.agh.edu.pl/~ggorecki/IS_Java/students.txt"));
         crawler.addIterationStartedListener(crawlerEvent -> System.out.println("Iteration: " + crawlerEvent.getIteration()));
         crawler.addStudentAddedListener(crawlerEvent -> {
             for (Logger logger : loggers) {
