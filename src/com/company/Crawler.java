@@ -9,66 +9,67 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Crawler {
-    private final List<CrawlerListener> studentAddedListeners = new LinkedList<>();
-    private final List<CrawlerListener> studentRemovedListeners = new LinkedList<>();
-    private final List<CrawlerListener> studentNoChangeListeners = new LinkedList<>();
-    private final List<CrawlerListener> iterationStartedListeners = new LinkedList<>();
-    private final List<CrawlerListener> iterationFinishedListeners = new LinkedList<>();
-    private final URL url;
-    private final String outputDirectory;
-    private List<Student> currentData = new LinkedList<>();
-    private long iteration = 0;
+    private List<CrawlerListener> studentAddedListeners = new LinkedList<>();
 
-    public Crawler(URL url, String outputDirectory) {
+    private URL url;
+    private String dirFile;
+    private List<Student> currentData = new LinkedList<>();
+    private int iteration = 0;
+
+    public Crawler(URL url){
         this.url = url;
-        this.outputDirectory = outputDirectory;
+        this.dirFile = "C:\\Users\\Tomek\\Desktop\\Semestr czwarty\\Programowanie w Java\\students.txt";
     }
 
     public void addStudentAddedListener(CrawlerListener crawlerListener) {
         studentAddedListeners.add(crawlerListener);
     }
 
+    private List<CrawlerListener> studentRemovedListeners = new LinkedList<>();
     public void addStudentRemovedListener(CrawlerListener crawlerListener) {
         studentRemovedListeners.add(crawlerListener);
     }
 
+    private List<CrawlerListener> studentNoChangeListeners = new LinkedList<>();
     public void addStudentNoChangeListener(CrawlerListener crawlerListener) {
         studentNoChangeListeners.add(crawlerListener);
     }
 
+    private List<CrawlerListener> iterationStartedListeners = new LinkedList<>();
     public void addIterationStartedListener(CrawlerListener crawlerListener) {
         iterationStartedListeners.add(crawlerListener);
     }
 
+    private List<CrawlerListener> iterationFinishedListeners = new LinkedList<>();
     public void addIterationFinishedListeners(CrawlerListener crawlerListener) {
         iterationFinishedListeners.add(crawlerListener);
     }
 
     public void run() throws Exception {
 
-        if (url == null) throw new CrawlerException("Url is null");
+        if (url == null) throw new CrawlerException("Incorrect URL");
 
-        int keepGoing = 2;
-        while (keepGoing > 0) {
-            listenersCall(CrawlerEventType.ITERATION_START, null, iteration); // Wywołanie listenerów
+        while (true) {
+            listenersCall(CrawlerEventType.ITERATION_START, null, iteration);
 
-            File tmpFile = new File(outputDirectory + String.valueOf(iteration)); // Tworzymy obiekt pliku "tmp"
-            FileUtils.copyURLToFile(url, tmpFile); // Wczytujemy dane z url to pliku
+            File tmp = new File(dirFile + String.valueOf(iteration));
+            FileUtils.copyURLToFile(url, tmp);
 
             List<Student> previousData = currentData;
-            currentData = StudentsParser.parse(tmpFile); // Parsujemy dane z pliku do currentData
+            currentData = StudentsParser.parse(tmp);
             currentData.sort(
-                    (a, b) -> (a.getLastName() + a.getFirstName()).compareToIgnoreCase(b.getLastName() + b.getFirstName())); // Zawsze posortowane dane w liście ułatwią późniejsze porównywanie zmian
+                    (a, b) -> (a.getLastName() + a.getFirstName()).compareToIgnoreCase(b.getLastName() + b.getFirstName()));
 
             if (previousData != null && currentData != null) {
                 List<Student> added = getAdded(previousData, currentData);
                 List<Student> removed = getAdded(currentData, previousData);
 
-                if (added.size() == 0 && removed.size() == 0) { // Jeśli wielkości list currentData i previousData są takie same, to mamy pewność, że żaden student nie został dodani ani usunięty
+                if (added.size() == 0 && removed.size() == 0) {
                     for (Student s : currentData) {
-                        listenersCall(CrawlerEventType.NO_CHANGE, s, iteration);
+                        listenersCall(CrawlerEventType.NO_CHANGES, s, iteration);
                     }
                 } else {
                     for (Student s : added) {
@@ -82,15 +83,14 @@ public class Crawler {
 
             }
 
-            Thread.sleep(1 * 1000); // Usypiamy wątek na określony czas (milisekundy)
+            TimeUnit.SECONDS.sleep(10);
 
-            iteration++; // Inkrementacja licznika iteracji
-            keepGoing--;
+            iteration++;
             listenersCall(CrawlerEventType.ITERATION_END, null, iteration);
         }
     }
 
-    @SuppressWarnings("Duplicates")
+   @SuppressWarnings("Duplicates")
     public List<Student> extractStudents(OrderMode mode) {
         List<Student> result = new LinkedList<>();
 
@@ -180,7 +180,7 @@ public class Crawler {
                     crawlerListener.actionPerformed(new CrawlerEvent(type, student, iteration));
                 break;
 
-            case NO_CHANGE:
+            case NO_CHANGES:
                 for (CrawlerListener crawlerListener : studentNoChangeListeners)
                     crawlerListener.actionPerformed(new CrawlerEvent(type, student, iteration));
                 break;
@@ -209,7 +209,7 @@ public class Crawler {
             result.removeAll(a);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
-            System.out.println("getAdded() ERROR");
+            System.out.println("Function getAdded() ERROR");
         }
 
         return result;

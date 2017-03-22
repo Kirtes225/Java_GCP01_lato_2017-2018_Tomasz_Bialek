@@ -8,9 +8,9 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class MailLogger implements Logger {
-    private final String username = "javacrawlertest3@onet.eu";
-    private final String password = "javapassword3";
-    private final String recipient = "javacrawlertest3@onet.eu";
+    private final String username = "javacrawlerprog1@gmail.com";
+    private final String password = "Javapassword3";
+    private final String recipient = "javacrawlertest3@onet.pl";
 
     /*public MailLogger(String userName, String password, String recipient) {
         this.userName = username;
@@ -23,7 +23,7 @@ public class MailLogger implements Logger {
         String subject = "Crawler - change: " + status;
         String msg = status + ":" + student.toString();
         Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.poczta.onet.pl");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.socketFactory.port", "465");
         properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         properties.put("mail.smtp.auth", "true");
@@ -35,6 +35,7 @@ public class MailLogger implements Logger {
                 return new PasswordAuthentication(username, password);
             }
         });
+
 
         try {
             Message message = new MimeMessage(session);
