@@ -8,11 +8,11 @@ public class Main {
 
         final Logger[] loggers = {new ConsoleLogger(), new MailLogger()};
 
-        final Crawler crawler = new Crawler(new URL("http://home.agh.edu.pl/~ggorecki/IS_Java/students.txt"));
+        final Crawler crawler = new Crawler(new URL("http://home.agh.edu.pl/~ggorecki/IS_Java/students"));
         crawler.addIterationStartedListener(crawlerEvent -> System.out.println("Iteration: " + crawlerEvent.getIteration()));
         crawler.addStudentAddedListener(crawlerEvent -> {
             for (Logger logger : loggers) {
-                logger.log("Added student: " + crawlerEvent.getStudent().getFirstName() + " " +
+                logger.log("ADDED: " + crawlerEvent.getStudent().getFirstName() + " " +
                                 crawlerEvent.getStudent().getLastName(),
                         crawlerEvent.getStudent());
             }
@@ -20,6 +20,7 @@ public class Main {
 
         crawler.addStudentNoChangeListener(crawlerEvent -> System.out.println(crawlerEvent.getStudent().toString() +
                 " : " + crawlerEvent.getType()));
+
         try {
 
             crawler.run();
