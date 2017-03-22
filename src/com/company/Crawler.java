@@ -21,7 +21,7 @@ public class Crawler {
 
     public Crawler(URL url){
         this.url = url;
-        this.dirFile = "C:\\Users\\Tomek\\Desktop\\Semestr czwarty\\Programowanie w Java\\students.txt";
+        this.dirFile = "C:\\Users\\Tomek\\Desktop\\Semestr czwarty\\Programowanie w Java\\students";
     }
 
     public void addStudentAddedListener(CrawlerListener crawlerListener) {
