@@ -1,10 +1,20 @@
 package com.example;
 
-public class Student implements Cloneable{
+public class Student implements Cloneable {
     private double mark;
     private String firstName;
     private String lastName;
     private int age;
+
+    public Student(double mark, String firstName, String lastName, int age) {
+        this.mark = mark;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+    }
+
+    public Student() {
+    }
 
     public double getMark() {
         return this.mark;
