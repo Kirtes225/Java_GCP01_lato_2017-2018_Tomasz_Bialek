@@ -12,16 +12,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CustomTabPane extends TabPane {
 
-    final Histogram histogram;
-    final StudentsTab studentsTab;
-    private final LogTab logTab = new LogTab();
+    final CustomBarChart customBarChart;
+    final CustomTableView customTableView;
+    private final CustomLogTab customLogTab = new CustomLogTab();
     private final CopyOnWriteArrayList<Student> students = new CopyOnWriteArrayList<>();
 
     public CustomTabPane() {
         super();
 
-        studentsTab = new StudentsTab();
-        histogram = new Histogram();
+        customTableView = new CustomTableView();
+        customBarChart = new CustomBarChart();
 
         TableView table = new TableView();
 
@@ -32,28 +32,28 @@ public class CustomTabPane extends TabPane {
 
         table.getColumns().addAll(markColumn, firstNameColumn, lastNameColumn, ageColumn);
 
-        this.getTabs().addAll(studentsTab, logTab, histogram);
+        this.getTabs().addAll(customTableView, customLogTab, customBarChart);
     }
 
-    public LogTab getLogTab() {
-        return logTab;
+    public CustomLogTab getCustomLogTab() {
+        return customLogTab;
     }
 
-    public Histogram getHistogram() {
-        return histogram;
+    public CustomBarChart getCustomBarChart() {
+        return customBarChart;
     }
 
     public void addStudent(Student student) {
         students.add(student);
 
-        histogram.setData(getChartData());
-        studentsTab.setData(students);
+        customBarChart.setData(getChartData());
+        customTableView.setData(students);
     }
 
     public void removeStudent(Student student) {
         students.remove(student);
 
-        histogram.setData(getChartData());
+        customBarChart.setData(getChartData());
     }
 
 
