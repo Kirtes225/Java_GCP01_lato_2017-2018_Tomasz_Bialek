@@ -6,7 +6,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCharacterCombination;
-import javafx.stage.Stage;
 
 public class CustomMenuBar extends MenuBar {
 
@@ -16,21 +15,18 @@ public class CustomMenuBar extends MenuBar {
     private final MenuItem exitItem;
     private final MenuItem aboutItem;
 
-    private final MenuBar menuBar;
+    public CustomMenuBar(){
 
-    public CustomMenuBar(Stage primaryStage){
+        this.programMenu = new Menu("Program");
+        this.exitItem = new MenuItem("Close");
 
-        menuBar = new MenuBar();
-        programMenu = new Menu("Program");
-        exitItem = new MenuItem("Close");
+        this.aboutMenu = new Menu("About");
+        this.aboutItem = new MenuItem("About");
 
-        aboutMenu = new Menu("About");
-        aboutItem = new MenuItem("About");
+        this.exitItem.setAccelerator(KeyCharacterCombination.keyCombination("Ctrl+C"));
 
-        exitItem.setAccelerator(KeyCharacterCombination.keyCombination("Ctrl+C"));
-
-        exitItem.setOnAction(event -> System.exit(0));
-        aboutItem.setOnAction(event -> {
+        this.exitItem.setOnAction(event -> System.exit(0));
+        this.aboutItem.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("About");
             alert.setHeaderText("Example program information");
@@ -39,13 +35,10 @@ public class CustomMenuBar extends MenuBar {
             alert.showAndWait();
         });
 
-        aboutMenu.getItems().addAll(aboutItem);
-        programMenu.getItems().addAll(exitItem);
+        this.aboutMenu.getItems().addAll(aboutItem);
+        this.programMenu.getItems().addAll(exitItem);
 
-        menuBar.getMenus().addAll(programMenu, aboutMenu);
-
-        //((VBox) scene.getRoot()).setVgrow(tabPane, Priority.ALWAYS);
-        //((VBox) scene.getRoot()).getChildren().addAll(menuBar, tabPane);
+        this.getMenus().addAll(programMenu, aboutMenu);
     }
 
 }
