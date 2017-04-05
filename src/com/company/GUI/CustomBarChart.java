@@ -12,13 +12,18 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
 public class CustomBarChart extends Tab {
-    private final CategoryAxis xAxis = new CategoryAxis();
-    private final NumberAxis yAxis = new NumberAxis();
-    private final BarChart chart = new BarChart(xAxis, yAxis);
     private final Label label = new Label("Distribution of marks");
+
+    private final CategoryAxis xAxis = new CategoryAxis();
+    private final NumberAxis yAxis = new NumberAxis(/*0, maxMarkCount(), 1*/);
+    private final BarChart chart = new BarChart(xAxis, yAxis);
+
 
     public CustomBarChart() {
         super();
+
+        this.yAxis.setTickUnit(1);
+        //this.yAxis.
 
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
@@ -26,10 +31,15 @@ public class CustomBarChart extends Tab {
         vBox.getChildren().add(chart);
 
         this.setContent(vBox);
-        this.setText("CustomBarChart");
+        this.setText("Histogram");
         this.setClosable(false);
 
         this.xAxis.setLabel("Marks");
+
+        /*this.xAxis.setCategories(FXCollections.<String>observableArrayList(
+                "2.0", "3.0", "3.5", "4.0", "4.5", "5.0"
+        ));*/
+
         this.yAxis.setLabel("Count");
         this.yAxis.setTickLabelFormatter(new StringConverter<Number>() {
             @Override
