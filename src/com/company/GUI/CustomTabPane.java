@@ -12,10 +12,32 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CustomTabPane extends TabPane {
 
+   /*private final int marksCount[] = {
+            0, //2.0
+            0, //3.0
+            0, //3.5
+            0, //4.0
+            0, //4.5
+            0, //5.0
+    };*/
+
+
     final CustomBarChart customBarChart;
     final CustomTableView customTableView;
     private final CustomLogTab customLogTab = new CustomLogTab();
     private final CopyOnWriteArrayList<Student> students = new CopyOnWriteArrayList<>();
+
+    /*public double maxMarkCount(){
+
+        double max = -1;
+
+        for (int i = 1; i < marksCount.length; i++) {
+            if (marksCount[i] > max) {
+                max = marksCount[i];
+            }
+        }
+        return max;
+    }*/
 
     public CustomTabPane() {
         super();
@@ -39,9 +61,6 @@ public class CustomTabPane extends TabPane {
         return customLogTab;
     }
 
-    public CustomBarChart getCustomBarChart() {
-        return customBarChart;
-    }
 
     public void addStudent(Student student) {
         students.add(student);
@@ -58,39 +77,30 @@ public class CustomTabPane extends TabPane {
 
 
     private ObservableList<XYChart.Series<String, Double>> getChartData() {
-        final int[] marksCount = {
+        final int marksCount[] = {
                 0, //2.0
                 0, //3.0
                 0, //3.5
                 0, //4.0
                 0, //4.5
-                0};//5.0
+                0, //5.0
+        };
 
         String[] xAxisLabels = {"2.0", "3.0", "3.5", "4.0", "4.5", "5.0"};
 
-        for (Student s : students) {
-            switch ((int) s.getMark() * 10) {
-                case 20:
-                    marksCount[0]++;
-                    break;
-                case 30:
-                    marksCount[1]++;
-                    break;
-                case 35:
-                    marksCount[2]++;
-                    break;
-                case 40:
-                    marksCount[3]++;
-                    break;
-                case 45:
-                    marksCount[4]++;
-                    break;
-                case 50:
-                    marksCount[5]++;
-                    break;
-                default:
-                    break;
-            }
+        for (Student st : students) {
+            if(st.getMark() == 2.0)
+                marksCount[0]++;
+            if(st.getMark() == 3.0)
+                marksCount[1]++;
+            if(st.getMark() == 3.5)
+                marksCount[2]++;
+            if(st.getMark() == 4.0)
+                marksCount[3]++;
+            if(st.getMark() == 4.5)
+                marksCount[4]++;
+            if(st.getMark() == 5.0)
+                marksCount[5]++;
         }
 
         final ObservableList<XYChart.Series<String, Double>> answer = FXCollections.observableArrayList();
