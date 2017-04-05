@@ -63,11 +63,11 @@ public class Crawler {
                         }
                     } else {
                         for (Student s : added) {
-                            listenersCall(CrawlerEventType.ADD, s, iteration);
+                            listenersCall(CrawlerEventType.NEW, s, iteration);
                         }
 
                         for (Student s : removed) {
-                            listenersCall(CrawlerEventType.DELETE, s, iteration);
+                            listenersCall(CrawlerEventType.REMOVED, s, iteration);
                         }
                     }
                 }
@@ -138,12 +138,12 @@ public class Crawler {
     private void listenersCall(CrawlerEventType type, Student student, long iteration) {
 
         switch (type) {
-            case ADD:
+            case NEW:
                 for (CrawlerListener crawlerListener : studentAddedListeners)
                     crawlerListener.actionPerformed(new CrawlerEvent(type, student, iteration));
                 break;
 
-            case DELETE:
+            case REMOVED:
                 for (CrawlerListener crawlerListener : studentRemovedListeners)
                     crawlerListener.actionPerformed(new CrawlerEvent(type, student, iteration));
                 break;
