@@ -5,7 +5,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCharacterCombination;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 public class CustomMenuBar extends MenuBar {
 
@@ -15,15 +17,15 @@ public class CustomMenuBar extends MenuBar {
     private final MenuItem exitItem;
     private final MenuItem aboutItem;
 
-    public CustomMenuBar(){
-
+    public CustomMenuBar()
+    {
         this.programMenu = new Menu("Program");
         this.exitItem = new MenuItem("Close");
 
         this.aboutMenu = new Menu("About");
         this.aboutItem = new MenuItem("About");
 
-        this.exitItem.setAccelerator(KeyCharacterCombination.keyCombination("Ctrl+C"));
+        this.exitItem.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN));
 
         this.exitItem.setOnAction(event -> System.exit(0));
         this.aboutItem.setOnAction(event -> {
