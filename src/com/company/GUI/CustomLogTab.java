@@ -14,23 +14,26 @@ public class CustomLogTab extends Tab {
 
     private final ListView<String> listView;
 
-    private final ObservableList<String> data;
+    private final ObservableList<String> observableList;
 
     public CustomLogTab() {
         this.listView = new ListView<>();
-        this.data = FXCollections.observableArrayList();
-        this.listView.setItems(data);
+        this.observableList = FXCollections.observableArrayList();
+        this.listView.setItems(observableList);
         this.setContent(this.listView);
-
         this.setText("Log");
         this.setClosable(false);
     }
 
     public synchronized void addData(String status, Student student) {
-        Date date = new Date();
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 
-        data.add(simpleDateFormat.format(date) + "        [" + status + "]          " +
-                student.getFirstName() + "        " + student.getLastName());
+        Date now = new Date();
+        String strDate = simpleDateFormat.format(now);
+
+
+        observableList.add(strDate + "  [" + status + "]  " +
+                student.getFirstName() + "  " + student.getLastName());
     }
 }
