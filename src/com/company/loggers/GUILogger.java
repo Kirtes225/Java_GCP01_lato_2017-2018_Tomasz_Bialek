@@ -2,17 +2,17 @@ package com.company.loggers;
 
 import com.example.Student;
 
-import com.company.GUI.LogTab;
+import com.company.GUI.CustomLogTab;
 
 public class GUILogger implements Logger {
-    private final LogTab logTab;
+    private final CustomLogTab customLogTab;
 
-    public GUILogger(LogTab logTab) {
-        this.logTab = logTab;
+    public GUILogger(CustomLogTab customLogTab) {
+        this.customLogTab = customLogTab;
     }
 
     @Override
     public void log(String status, Student student) {
-        logTab.addData(status, student);
+        customLogTab.addData(status, student);
     }
 }
