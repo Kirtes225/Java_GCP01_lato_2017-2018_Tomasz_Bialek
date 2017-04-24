@@ -13,6 +13,13 @@ public class Student implements Cloneable {
         this.age = age;
     }
 
+    public Student(Student student) {
+        this.mark = student.mark;
+        this.firstName = student.firstName;
+        this.lastName = student.lastName;
+        this.age = student.age;
+    }
+
     public Student() {
     }
 
@@ -109,3 +116,4 @@ public class Student implements Cloneable {
                 '}';
     }
 }
+
