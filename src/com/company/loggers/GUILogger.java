@@ -2,17 +2,23 @@ package com.company.loggers;
 
 import com.example.Student;
 
-import com.company.GUI.CustomLogTab;
+import com.company.events.CrawlerEventType;
+import com.company.fxml.MainController;
 
 public class GUILogger implements Logger {
-    private final CustomLogTab customLogTab;
+    private final MainController mainController;
 
-    public GUILogger(CustomLogTab customLogTab) {
-        this.customLogTab = customLogTab;
+
+    public GUILogger(MainController mainController) {
+        this.mainController = mainController;
     }
 
     @Override
-    public void log(String status, Student student) {
-        customLogTab.addData(status, student);
+    public void log(CrawlerEventType crawlerEventType, Student student) {
+        if (CrawlerEventType.ADD.equals(crawlerEventType)) {
+            mainController.addStudent(student);
+        } else if (CrawlerEventType.DELETE.equals(crawlerEventType)) {
+            mainController.removeStudent(student);
+        }
     }
 }
