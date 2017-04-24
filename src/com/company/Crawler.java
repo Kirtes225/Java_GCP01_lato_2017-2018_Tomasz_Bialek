@@ -1,33 +1,36 @@
 package com.company;
 
+import com.company.events.CrawlerEvent;
+import com.company.events.CrawlerEventType;
+import com.company.events.CrawlerListener;
 import com.example.Student;
 import com.example.StudentsParser;
-
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Crawler {
-    private final List<CrawlerListener> studentAddedListeners = new CopyOnWriteArrayList<>();
-    private final List<CrawlerListener> studentRemovedListeners = new CopyOnWriteArrayList<>();
-    private final List<CrawlerListener> studentNoChangeListeners = new CopyOnWriteArrayList<>();
-    private final List<CrawlerListener> iterationStartedListeners = new CopyOnWriteArrayList<>();
-    private final List<CrawlerListener> iterationFinishedListeners = new CopyOnWriteArrayList<>();
+    private final List<CrawlerListener> studentAddedListeners = Collections.synchronizedList(new ArrayList<>());
+    private final List<CrawlerListener> studentRemovedListeners = Collections.synchronizedList(new ArrayList<>());
+    private final List<CrawlerListener> studentNoChangeListeners = Collections.synchronizedList(new ArrayList<>());
+    private final List<CrawlerListener> iterationStartedListeners = Collections.synchronizedList(new ArrayList<>());
+    private final List<CrawlerListener> iterationFinishedListeners = Collections.synchronizedList(new ArrayList<>());
     private final URL url;
-    private final String outputDirectory = "C:\\Users\\Tomek\\Desktop\\Java-students\\students";
+    private final String outputDirectory = "C:\\Users\\Tomek\\Desktop\\Java-students\\";
     private final Object iterationLock = new Object();
     private long iteration = 0;
-    private List<Student> currentData = new CopyOnWriteArrayList<>();
+    private List<Student> data = Collections.synchronizedList(new ArrayList<>());
+    private AtomicBoolean keepGoing = new AtomicBoolean(true);
 
     public Crawler(URL url) {
         this.url = url;
+    }
+
+    public AtomicBoolean getKeepGoing() {
+        return keepGoing;
     }
 
     public void addIterationFinishedListeners(CrawlerListener crawlerListener) {
@@ -36,57 +39,60 @@ public class Crawler {
 
     public void run() throws Exception {
 
-        if (url == null) throw new CrawlerException("Incorrect URL");
+        if (url == null) throw new CrawlerException("Url is null");
 
-        while (true) {
-            synchronized (iterationLock) {
+        while (keepGoing.get()) {
+            synchronized (iterationLock) {////////////////////////////////////////////////////////////////////////////////////////////
                 listenersCall(CrawlerEventType.ITERATION_START, null, iteration); // Wywołanie listenerów
             }
 
-            File tmpFile = new File(outputDirectory + String.valueOf(iteration));
+            File tmpFile = File.createTempFile("crawler_tmp_", null, new File(outputDirectory));
+            FileUtils.copyURLToFile(url, tmpFile); // Wczytujemy dane z url to pliku
 
-            FileUtils.copyURLToFile(url, tmpFile);
+            List<Student> previousData = new ArrayList<>(data);
+            data = StudentsParser.parse(tmpFile); // Parsujemy dane z pliku do data
 
-            List<Student> previousData = currentData;
-            currentData = StudentsParser.parse(tmpFile);
-            currentData.sort(
-                    (a, b) -> (a.getLastName() + a.getFirstName()).compareToIgnoreCase(b.getLastName() + b.getFirstName()));
+            data.sort(
+                    (a, b) -> (a.getLastName() + a.getFirstName()).compareToIgnoreCase(b.getLastName() + b.getFirstName())); // Zawsze posortowane dane w liście ułatwią późniejsze porównywanie zmian
 
-            if (previousData != null && currentData != null) {
-                List<Student> added = getAdded(previousData, currentData);
-                List<Student> removed = getAdded(currentData, previousData);
+            if (previousData != null && data != null) {
+                List<Student> added = getAdded(previousData, data);
+                List<Student> removed = getRemoved(previousData, data);
 
                 synchronized (iterationLock) {
-                    if (added.size() == 0 && removed.size() == 0) {
-                        for (Student s : currentData) {
+                    if (added.size() == 0 && removed.size() == 0) { // Jeśli wielkości list data i previousData są takie same, to mamy pewność, że żaden student nie został dodani ani usunięty
+                        for (Student s : data) {
                             listenersCall(CrawlerEventType.NO_CHANGE, s, iteration);
                         }
                     } else {
                         for (Student s : added) {
-                            listenersCall(CrawlerEventType.NEW, s, iteration);
+                            listenersCall(CrawlerEventType.ADD, s, iteration);
                         }
 
                         for (Student s : removed) {
-                            listenersCall(CrawlerEventType.REMOVED, s, iteration);
+                            listenersCall(CrawlerEventType.DELETE, s, iteration);
                         }
                     }
                 }
             }
 
-            TimeUnit.SECONDS.sleep(10);
+            Thread.sleep(1 * 1000); // Usypiamy wątek na określony czas (milisekundy)
 
             synchronized (iterationLock) {
-                iteration++;
+                iteration++; // Inkrementacja licznika iteracji
                 listenersCall(CrawlerEventType.ITERATION_END, null, iteration);
             }
-
         }
+    }
+
+    public synchronized void cancel() {
+        keepGoing.set(false);
     }
 
     public List<Student> extractStudents(OrderMode mode) {
         List<Student> result = new LinkedList<>();
 
-        Collections.copy(result, currentData);
+        Collections.copy(result, data);
 
         switch (mode) {
             case AGE:
@@ -112,38 +118,38 @@ public class Crawler {
     public double extractMark(ExtremumMode mode) {
         switch (mode) {
             case MAX:
-                return currentData.stream().mapToDouble(Student::getMark).max().getAsDouble();
+                return data.stream().mapToDouble(Student::getMark).max().getAsDouble();
             case MIN:
-                return currentData.stream().mapToDouble(Student::getMark).min().getAsDouble();
+                return data.stream().mapToDouble(Student::getMark).min().getAsDouble();
 
             default:
-                return currentData.stream().mapToDouble(Student::getMark).max().getAsDouble();
+                return data.stream().mapToDouble(Student::getMark).max().getAsDouble();
         }
     }
 
     public int extractAge(ExtremumMode mode) {
-        if (currentData.size() == 0) return 0;
+        if (data.size() == 0) return 0;
 
         switch (mode) {
             case MAX:
-                return currentData.stream().mapToInt(Student::getAge).max().getAsInt();
+                return data.stream().mapToInt(Student::getAge).max().getAsInt();
             case MIN:
-                return currentData.stream().mapToInt(Student::getAge).min().getAsInt();
+                return data.stream().mapToInt(Student::getAge).min().getAsInt();
 
             default:
-                return currentData.stream().mapToInt(Student::getAge).max().getAsInt();
+                return data.stream().mapToInt(Student::getAge).max().getAsInt();
         }
     }
 
     private void listenersCall(CrawlerEventType type, Student student, long iteration) {
 
         switch (type) {
-            case NEW:
+            case ADD:
                 for (CrawlerListener crawlerListener : studentAddedListeners)
                     crawlerListener.actionPerformed(new CrawlerEvent(type, student, iteration));
                 break;
 
-            case REMOVED:
+            case DELETE:
                 for (CrawlerListener crawlerListener : studentRemovedListeners)
                     crawlerListener.actionPerformed(new CrawlerEvent(type, student, iteration));
                 break;
@@ -165,21 +171,29 @@ public class Crawler {
         }
     }
 
-    private List<Student> getAdded(List<Student> a, List<Student> b) {
+    private List<Student> getAdded(List<Student> prevData, List<Student> currentData) {
         List<Student> result = new LinkedList<>();
 
-        try {
-            for (Student s : b) {
-                result.add(s.clone());
+        for (Student s : currentData) {
+            if (!prevData.contains(s)) {
+                result.add(s);
             }
-
-            result.removeAll(a);
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            System.out.println("getAdded() ERROR");
         }
 
         return result;
+    }
+
+    private List<Student> getRemoved(List<Student> prevData, List<Student> currentData) {
+        List<Student> result = new LinkedList<>();
+
+        for (Student s : prevData) {
+            if (!currentData.contains(s)) {
+                result.add(s);
+            }
+        }
+
+        return result;
+
     }
 
     public void addStudentAddedListener(CrawlerListener crawlerListener) {
