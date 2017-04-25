@@ -44,7 +44,7 @@
                                 <Font size="17.0" />
                             </font>
                         </Label>
-                        <PasswordField fx:id="passwordField" text="password">
+                        <PasswordField fx:id="passwordField" accessibleRole="TEXT_FIELD" text="password">
                      <font>
                         <Font size="10.0" />
                      </font>
