@@ -1,7 +1,5 @@
 package com.company.loggers;
 
-import com.company.Main;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -16,7 +14,7 @@ public class CompressedLogger extends TextLogger implements Closeable {
     private final File dstZipFile;
     private final BlockingQueue<String> stringBlockingQueue;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.M.dd_HH.mm.ss.SSS");
-    private ZipOutputStream zipOutputStream; // FIXME: 23.04.2017 threadsafe
+    private ZipOutputStream zipOutputStream;
 
 /*
 	public CompressedLogger(File file) {
@@ -92,12 +90,12 @@ public class CompressedLogger extends TextLogger implements Closeable {
                     }
                 }
 
-                ZipEntry zipEntry = new ZipEntry(String.valueOf(simpleDateFormat.format(Main.LAUNCH_DATE)));
+                /*ZipEntry zipEntry = new ZipEntry(String.valueOf(simpleDateFormat.format(Main.LAUNCH_DATE)));
                 try {
                     zipOutputStream.putNextEntry(zipEntry);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 try {
                     String tmp;

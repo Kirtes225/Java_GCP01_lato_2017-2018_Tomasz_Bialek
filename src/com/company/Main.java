@@ -6,25 +6,20 @@ import com.company.events.UserLoggingEvent;
 import com.company.events.UserLoggingEventListener;
 import com.company.fxml.LoginPanelController;
 import com.company.fxml.MainController;
-import com.company.loggers.CompressedLogger;
 import com.company.loggers.GUILogger;
 import com.company.loggers.Logger;
-import com.company.loggers.TextLogger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Main extends Application {
-    public static final Date LAUNCH_DATE = new Date();
 
     private static String[] arguments;
 
@@ -45,8 +40,10 @@ public class Main extends Application {
         MainController mainController = mainScreenLoader.getController();
         Parent root = mainScreenLoader.getRoot();
 
-        stage.setScene(new Scene(root, 600, 480));
+        //Crawler
+        stage.setScene(new Scene(root, 500, 500));
         stage.show();
+
 
         mainLogic(mainController);
     }
@@ -55,8 +52,7 @@ public class Main extends Application {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                final Logger[] loggers = {new GUILogger(mainController), new TextLogger(new File("ss")), new CompressedLogger
-                        ("zippp.zip")};
+                final Logger[] loggers = {new GUILogger(mainController)};
 
                 ArrayList<URL> urls = new ArrayList<URL>() {{
                     try {
@@ -95,7 +91,7 @@ public class Main extends Application {
                 System.out.println("Monitor is running");
 
                 try {
-                    Thread.sleep(5*1000);
+                    Thread.sleep(30*1000);
                     monitor.cancel();
                     System.exit(0);
                 } catch (InterruptedException e) {
@@ -129,7 +125,9 @@ public class Main extends Application {
             }
         });
 
-        primaryStage.setScene(new Scene(root, 600, 480));
+        //Logging
+        primaryStage.setScene(new Scene(root, 500, 500));
+        primaryStage.setTitle("Crawler");
         primaryStage.show();
     }
 }

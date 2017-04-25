@@ -27,8 +27,8 @@ public class Monitor {
 
     public Monitor(ArrayList<URL> urls, int amountOfThreads, Logger[] loggers) throws MonitorException {
 
-        if (urls.size() > amountOfThreads) {
-            throw new MonitorException("Wrong amoutOfThreads");
+        if (urls.size() < amountOfThreads) {
+            throw new MonitorException("Wrong threads' amount");
         }
 
         this.urls = new ArrayList<>(urls); //copy

@@ -14,58 +14,47 @@
     <children>
         <VBox layoutY="6.0" prefHeight="421.0" prefWidth="612.0">
             <children>
-                <Label fx:id="titleLabel" alignment="CENTER" prefHeight="160.0" prefWidth="600.0" text="CRAWLER" textAlignment="CENTER" textFill="#716f71">
-                    <font>
-                        <Font name="Roboto Thin" size="36.0" />
-                    </font>
-                    <padding>
-                        <Insets bottom="64.0" />
-                    </padding>
-                </Label>
-                <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="400.0" spacing="10.0">
+                <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="612.0" spacing="10.0">
                     <children>
                         <Label fx:id="loginLabel" text="Login:">
                             <HBox.margin>
                                 <Insets left="64.0" />
                             </HBox.margin>
                             <font>
-                                <Font name="Roboto Thin" size="32.0" />
+                                <Font size="17.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="loginTextField">
+                        <TextField fx:id="loginTextField" prefHeight="23.0" prefWidth="148.0" text="login">
                      <HBox.margin>
                         <Insets right="100.0" />
                      </HBox.margin>
                      <font>
-                        <Font name="Roboto Thin" size="14.0" />
+                        <Font size="10.0" />
                      </font></TextField>
+                        <Button mnemonicParsing="false" onAction="#loginBtnClick" prefHeight="25.0" prefWidth="97.0" text="Login" textOverrun="CLIP" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="400.0">
+                <HBox alignment="CENTER_LEFT" prefHeight="14.0" prefWidth="612.0">
                     <children>
                         <Label fx:id="passwordLabel" text="Password: ">
                             <HBox.margin>
                                 <Insets left="64.0" />
                             </HBox.margin>
                             <font>
-                                <Font name="Roboto Thin" size="32.0" />
+                                <Font size="17.0" />
                             </font>
                         </Label>
-                        <PasswordField fx:id="passwordField">
+                        <PasswordField fx:id="passwordField" text="password">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="10.0" />
                      </font>
                      <HBox.margin>
                         <Insets right="100.0" />
                      </HBox.margin></PasswordField>
+                        <Button mnemonicParsing="false" onAction="#createUserBtnClick" prefHeight="25.0" prefWidth="119.0" text="Create new user" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                    <children>
-                        <Button mnemonicParsing="false" onAction="#loginBtnClick" text="Login" />
-                        <Button mnemonicParsing="false" onAction="#createUserBtnClick" text="Create new user" />
-                    </children>
-                </HBox>
+                <HBox alignment="CENTER" prefHeight="93.0" prefWidth="612.0" />
             </children>
         </VBox>
     </children>

@@ -42,25 +42,25 @@ public class Crawler {
         if (url == null) throw new CrawlerException("Url is null");
 
         while (keepGoing.get()) {
-            synchronized (iterationLock) {////////////////////////////////////////////////////////////////////////////////////////////
+            synchronized (iterationLock) {
                 listenersCall(CrawlerEventType.ITERATION_START, null, iteration); // Wywołanie listenerów
             }
 
-            File tmpFile = File.createTempFile("crawler_tmp_", null, new File(outputDirectory));
-            FileUtils.copyURLToFile(url, tmpFile); // Wczytujemy dane z url to pliku
+            File tmpFile = new File (outputDirectory, "crawler"+iteration);
+            FileUtils.copyURLToFile(url, tmpFile); // Dane url -> plik
 
             List<Student> previousData = new ArrayList<>(data);
-            data = StudentsParser.parse(tmpFile); // Parsujemy dane z pliku do data
+            data = StudentsParser.parse(tmpFile); // Plik z danymi parsowanie -> data
 
             data.sort(
-                    (a, b) -> (a.getLastName() + a.getFirstName()).compareToIgnoreCase(b.getLastName() + b.getFirstName())); // Zawsze posortowane dane w liście ułatwią późniejsze porównywanie zmian
+                    (a, b) -> (a.getLastName() + a.getFirstName()).compareToIgnoreCase(b.getLastName() + b.getFirstName()));
 
             if (previousData != null && data != null) {
                 List<Student> added = getAdded(previousData, data);
                 List<Student> removed = getRemoved(previousData, data);
 
                 synchronized (iterationLock) {
-                    if (added.size() == 0 && removed.size() == 0) { // Jeśli wielkości list data i previousData są takie same, to mamy pewność, że żaden student nie został dodani ani usunięty
+                    if (added.size() == 0 && removed.size() == 0) {
                         for (Student s : data) {
                             listenersCall(CrawlerEventType.NO_CHANGE, s, iteration);
                         }
@@ -76,7 +76,7 @@ public class Crawler {
                 }
             }
 
-            Thread.sleep(1 * 1000); // Usypiamy wątek na określony czas (milisekundy)
+            Thread.sleep(500); //
 
             synchronized (iterationLock) {
                 iteration++; // Inkrementacja licznika iteracji
